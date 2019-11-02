@@ -1,0 +1,20 @@
+import 'package:flutterflix/src/Models/Movie.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
+class MoviesProvider {
+  String _apiKey = 'd90f883e396197afa8e96a520bddab08';
+  String _url = 'api.themoviedb.org';
+  String _language = 'es-ES';
+
+  Future<List<Movie>> getInCinemas() async {
+    final url = Uri.https(_url, '3/movie/now_playing', {
+      'api_key': _apiKey,
+      'language': _language,
+    });
+    final resp = await http.get(url);
+    final decodedData = json.decode(resp.body);
+    final movies = Movies.fromJsonList(decodedData['results']);
+    return movies.items;
+  }
+}
