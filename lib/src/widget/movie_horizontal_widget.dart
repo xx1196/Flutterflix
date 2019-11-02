@@ -11,7 +11,7 @@ class MovieHorizontal extends StatelessWidget {
     final _screenSize = MediaQuery.of(context).size;
 
     return Container(
-      height: _screenSize.height * .2,
+      height: _screenSize.height * .25,
       child: PageView(
         pageSnapping: false,
         controller: PageController(
@@ -38,12 +38,12 @@ class MovieHorizontal extends StatelessWidget {
                 height: 160.0,
               ),
             ),
-            /*SizedBox(height: 5.0),
+            SizedBox(height: 5.0),
             Text(
               movie.title,
               overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.caption,
-            ),*/
+            ),
           ],
         ),
       );
