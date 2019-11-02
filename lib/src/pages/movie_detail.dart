@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutterflix/src/Models/Actor.dart';
 import 'package:flutterflix/src/Models/Movie.dart';
+import 'package:flutterflix/src/Providers/MovieProvider.dart';
 
 class MovieDetail extends StatelessWidget {
   @override
@@ -15,6 +17,7 @@ class MovieDetail extends StatelessWidget {
             SizedBox(height: 10.0),
             _posterTitle(context, movie),
             _descriptionMovie(movie),
+            _cast(movie)
           ]),
         )
       ],
@@ -94,6 +97,57 @@ class MovieDetail extends StatelessWidget {
       child: Text(
         movie.overview,
         textAlign: TextAlign.justify,
+      ),
+    );
+  }
+
+  Widget _cast(Movie movie) {
+    final moviesProvider = MoviesProvider();
+
+    return FutureBuilder(
+      future: moviesProvider.getCast(movie.id.toString()),
+      builder: (BuildContext context, AsyncSnapshot<List<Actor>> snapshot) {
+        if (snapshot.hasData) {
+          return _ActorsPageView(snapshot.data);
+        } else {
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      },
+    );
+  }
+
+  Widget _ActorsPageView(List<Actor> actors) {
+    return SizedBox(
+      height: 200.0,
+      child: PageView.builder(
+        pageSnapping: false,
+        controller: PageController(viewportFraction: .3, initialPage: 1),
+        itemCount: actors.length,
+        itemBuilder: (context, i) => _actorCard(actors[i]),
+      ),
+    );
+  }
+
+  Widget _actorCard(Actor actor) {
+    return Container(
+      child: Column(
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20.0),
+            child: FadeInImage(
+              image: NetworkImage(actor.getPicture()),
+              placeholder: AssetImage('assets/img/no-image.jpg'),
+              height: 150.0,
+	            fit: BoxFit.cover,
+            ),
+          ),
+	        Text(
+			        actor.name,
+		        overflow: TextOverflow.ellipsis,
+	        )
+        ],
       ),
     );
   }
