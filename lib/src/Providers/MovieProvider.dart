@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutterflix/src/Models/Actor.dart';
 import 'package:flutterflix/src/Models/Movie.dart';
 import 'package:http/http.dart' as http;
@@ -30,7 +31,7 @@ class MoviesProvider {
     final movies = Movies.fromJsonList(decodedData['results']);
     return movies.items;
   }
-  
+
   Future<List<Actor>> _processResponseCast(Uri url) async {
     final resp = await http.get(url);
     final decodedData = json.decode(resp.body);
@@ -49,7 +50,7 @@ class MoviesProvider {
 
   Future<List<Movie>> getPopulars() async {
     if (_loadingPopulars) return [];
-    
+
     final url = Uri.https(_url, '$_apiVersion/movie/popular', {
       'api_key': _apiKey,
       'language': _language,
@@ -73,5 +74,15 @@ class MoviesProvider {
     });
   
     return await _processResponseCast(url);
+  }
+
+  Future<List<Movie>> searchMovie(String query) async {
+    final url = Uri.https(_url, '$_apiVersion/search/movie', {
+    	'api_key': _apiKey,
+	    'language': _language,
+	    'query': query
+    });
+
+    return await _processResponseMovie(url);
   }
 }
