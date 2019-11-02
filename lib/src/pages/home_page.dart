@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutterflix/src/Models/Movie.dart';
 import 'package:flutterflix/src/Providers/MovieProvider.dart';
 import 'package:flutterflix/src/widget/card_swiper_widget.dart';
+import 'package:flutterflix/src/widget/movie_horizontal_widget.dart';
 
 class HomePage extends StatelessWidget {
   final moviesProvider = MoviesProvider();
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         appBar: AppBar(
           title: Text('Películas en cines'),
@@ -52,16 +52,22 @@ class HomePage extends StatelessWidget {
       width: double.infinity,
       child: Column(
         children: <Widget>[
-          Text(
-            'Más Populares',
-            style: Theme.of(context).textTheme.subhead,
-          ),
+          Container(
+              padding: EdgeInsets.only(left: 20.0),
+              child: Text(
+                'Más Populares',
+                style: Theme.of(context).textTheme.subhead,
+              )),
+          SizedBox(height: 5.0),
           FutureBuilder(
             future: moviesProvider.getPopulars(),
-            builder: (BuildContext context, AsyncSnapshot<List<Movie>> snapshot) {
-              snapshot.data.forEach((p) => print(p.title));
-
-              return Container();
+            builder:
+                (BuildContext context, AsyncSnapshot<List<Movie>> snapshot) {
+              if (snapshot.hasData) {
+                return MovieHorizontal(movies: snapshot.data);
+              } else {
+                return Center(child: CircularProgressIndicator());
+              }
             },
           ),
         ],
