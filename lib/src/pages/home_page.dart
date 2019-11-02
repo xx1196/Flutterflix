@@ -3,6 +3,8 @@ import 'package:flutterflix/src/Providers/MovieProvider.dart';
 import 'package:flutterflix/src/widget/card_swiper_widget.dart';
 
 class HomePage extends StatelessWidget {
+  final moviesProvider = MoviesProvider();
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -25,10 +27,22 @@ class HomePage extends StatelessWidget {
   }
 
   Widget _swiperCards() {
-    final moviesProvider = MoviesProvider();
-    moviesProvider.getInCinemas();
-    return CardSwiper(
-      movies: [1, 2, 3, 4, 5],
+    return FutureBuilder(
+      future: moviesProvider.getInCinemas(),
+      builder: (BuildContext context, AsyncSnapshot<List> snapshot) {
+        if (snapshot.hasData) {
+          return CardSwiper(
+            movies: snapshot.data,
+          );
+        } else {
+          return Container(
+            height: 400.0,
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+      },
     );
   }
 }
