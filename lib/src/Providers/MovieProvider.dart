@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'package:flutterflix/src/Models/Actor.dart';
 import 'package:flutterflix/src/Models/Movie.dart';
 import 'package:http/http.dart' as http;
 
@@ -24,11 +24,18 @@ class MoviesProvider {
     _popularsStreamController?.close();
   }
 
-  Future<List<Movie>> _processResponse(Uri url) async {
+  Future<List<Movie>> _processResponseMovie(Uri url) async {
     final resp = await http.get(url);
     final decodedData = json.decode(resp.body);
     final movies = Movies.fromJsonList(decodedData['results']);
     return movies.items;
+  }
+  
+  Future<List<Actor>> _processResponseCast(Uri url) async {
+    final resp = await http.get(url);
+    final decodedData = json.decode(resp.body);
+    final cast = Cast.fromJsonList(decodedData['cast']);
+    return cast.actors;
   }
 
   Future<List<Movie>> getInCinemas() async {
@@ -37,7 +44,7 @@ class MoviesProvider {
       'language': _language,
     });
 
-    return await _processResponse(url);
+    return await _processResponseMovie(url);
   }
 
   Future<List<Movie>> getPopulars() async {
@@ -51,11 +58,20 @@ class MoviesProvider {
     _loadingPopulars = true;
     _popularsPage++;
 
-    final resp = await _processResponse(url);
+    final resp = await _processResponseMovie(url);
 
     _populars.addAll(resp);
     popularsSink(_populars);
     _loadingPopulars = false;
     return resp;
+  }
+
+  Future<List<Actor>> getCast(String movieId) async {
+    final url = Uri.https(_url, '$_apiVersion/movie/$movieId/credits', {
+      'api_key': _apiKey,
+      'language': _language,
+    });
+  
+    return await _processResponseCast(url);
   }
 }
