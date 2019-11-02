@@ -72,4 +72,12 @@ class Movie {
       return urlImage + posterPath;
     }
   }
+
+  getBackgroundImg() {
+    if (posterPath == null) {
+      return noImageAvailable;
+    } else {
+      return urlImage + backdropPath;
+    }
+  }
 }
