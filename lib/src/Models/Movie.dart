@@ -14,6 +14,7 @@ class Movies {
 }
 
 class Movie {
+  String uniqueId;
   String noImageAvailable = 'https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg';
   String urlImage = 'https://image.tmdb.org/t/p/w500/';
   int voteCount;
